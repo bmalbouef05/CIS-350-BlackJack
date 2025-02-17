@@ -7,6 +7,9 @@ class Hand:
         self.total_hand_value = 0
 
     def draw_card(self, card):
+
+        # Adds the given card to the hand and calculates the now total of the hand
+
         self.current_hand.append(card)
         self.total_hand_value += card.get_blackjack_value()
 
