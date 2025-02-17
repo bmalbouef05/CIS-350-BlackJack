@@ -4,3 +4,22 @@ from deck import Deck
 class Hand:
     def __init__(self):
         self.current_hand = []
+        self.total_hand_value = 0
+
+    def draw_card(self, card):
+        self.current_hand.append(card)
+        self.total_hand_value += card.get_blackjack_value()
+
+    def reset_hand(self):
+        self.current_hand = []
+        self.total_hand_value = 0
+
+    def get_hand_value(self):
+        return self.total_hand_value
+    
+    def is_blackjack(self):
+        return (self.total_hand_value == 21)
+    
+    def is_bust(self):
+        return (self.total_hand_value > 21)
+            
