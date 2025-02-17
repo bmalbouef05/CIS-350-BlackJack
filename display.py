@@ -9,6 +9,3 @@ class Display():
         py.display.flip()
         self.running = True
 
-
-d= Display(1200, 700)
-
