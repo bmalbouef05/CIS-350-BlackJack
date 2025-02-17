@@ -1,4 +1,6 @@
 import random
+import display
+import pygame as py
 
 # Card deck with values
 CARD_VALUES = {
@@ -40,3 +42,9 @@ class BlackjackGame:
     
 
 if __name__ == "__main__":
+    d = display.Display(1200, 700)
+    
+    while d.running:
+        for event in py.event.get():      
+            if event.type == py.QUIT: 
+                d.running = False
