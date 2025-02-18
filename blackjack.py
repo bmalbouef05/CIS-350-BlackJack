@@ -1,8 +1,9 @@
 import random
-import pygame as py
+import pygame
 from display import Display
 from deck import Deck
 from player import Player
+from button import Button
 
 
 class BlackjackGame:
@@ -13,19 +14,22 @@ class BlackjackGame:
         self.deck = Deck()
         self.player = Player(True)
         self.dealer = Player(False)
+
+        self.money_total = 1000
+        self.rounds_total = 0
         
-        # 0 = Player, 1 = Dealer
-        self.current_turn = 0
+        # Variable to keep track of whether or not the game is being played
+        self.play_game = True
         
         # self.init_ui()
+        pygame.init()
         self.new_game()
     
     def deal_start_cards(self):
         
-        # Make a new deck and make sure the player goes first
+        # Make a new deck
 
         self.deck.reset_deck()
-        self.current_turn = 0
 
         # Draws two cards per player to start off
 
@@ -35,7 +39,6 @@ class BlackjackGame:
         self.dealer.hand.draw_card(self.deck.deal_card())
 
     def player_turn(self):
-        self.current_turn = 1
 
         # Needs to be implemented
 
@@ -43,21 +46,17 @@ class BlackjackGame:
 
 
     def dealer_turn(self):
-
-        # Will check if the player/dealer is standing in the game loop
         
         # If the dealer has either blackjack or bust, they "stand" (don't take any more turns)
 
         if self.dealer.hand.is_blackjack() or self.dealer.hand.is_bust():
             self.dealer.stand()
-            self.current_turn = 0
             return
 
         # If the dealer has a hand value less than 17, they hit
 
         if self.dealer.hand.get_hand_value() < 17:
             self.dealer.hit(self.deck.deal_card())
-            self.current_turn = 0
             return
 
 
@@ -71,10 +70,23 @@ if __name__ == "__main__":
 
     d = Display(1200, 700)
     game = BlackjackGame()
-    
+
+    # Setting up hit and stand button for the GUI
+
+    hit_button = Button("Hit", 900, 500, 150, 75, d)
+    stand_button = Button("Stand", 900, 400, 150, 75, d)
+
     # Constant loop to keep the game running as long as the player doesn't exit out of the window.
 
-    while d.running:
-        for event in py.event.get():      
-            if event.type == py.QUIT: 
+    while d.running and game.play_game:
+
+        # Player continues to hit until they stand. Then dealer does their turns.
+        
+        for event in pygame.event.get():      
+            if event.type == pygame.QUIT: 
                 d.running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if hit_button.check_hovering():
+                    print("hit")
+                elif stand_button.check_hovering():
+                    print("stand")
