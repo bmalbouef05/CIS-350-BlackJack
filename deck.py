@@ -5,8 +5,8 @@ class Deck:
     def __init__(self):
         self.current_deck = []
 
-        available_ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
-        available_suits = ["Spades", "Hearts", "Diamonds", "Clubs"]
+        available_ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
+        available_suits = ["spades", "hearts", "diamonds", "clubs"]
 
         # Loop through all available ranks and suits and add a card of every combination
         # To the current deck (initializes the deck)
@@ -21,8 +21,8 @@ class Deck:
         
         self.current_deck = []
 
-        available_ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
-        available_suits = ["Spades", "Hearts", "Diamonds", "Clubs"]
+        available_ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
+        available_suits = ["spades", "hearts", "diamonds", "clubs"]
 
         # Loop through all available ranks and suits and add a card of every combination
         # To the current deck (initializes the deck)

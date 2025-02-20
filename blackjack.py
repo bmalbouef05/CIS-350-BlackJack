@@ -4,7 +4,7 @@ from display import Display
 from deck import Deck
 from player import Player
 from button import Button
-
+import sys
 
 class BlackjackGame:
     def __init__(self):
@@ -21,7 +21,7 @@ class BlackjackGame:
         # Variable to keep track of whether or not the game is being played
         self.play_game = True
         
-        # self.init_ui()
+        self.init_ui()
         pygame.init()
         self.new_game()
     
@@ -37,13 +37,22 @@ class BlackjackGame:
         self.player.hand.draw_card(self.deck.deal_card())
         self.dealer.hand.draw_card(self.deck.deal_card())
         self.dealer.hand.draw_card(self.deck.deal_card())
-
-    def player_turn(self):
-
-        # Needs to be implemented
-
+    
+    def init_ui(self):
         pass
 
+    #Scores the current hands and decides who wins then resets the game
+    def score_round(self):
+
+        #Figure out all of the betting(player wins or loses)
+        if self.dealer.hand.get_hand_value() > 21:
+            print("Dealer Bust/PLayer Wins")
+        elif self.player.hand.get_hand_value() == self.dealer.hand.get_hand_value():
+            print("PUSH")
+        elif self.player.hand.get_hand_value() > self.dealer.hand.get_hand_value():
+            print("Player Wins")
+        elif self.player.hand.get_hand_value() < self.dealer.hand.get_hand_value():
+            print("Dealer Wins")
 
     def dealer_turn(self):
         
@@ -51,17 +60,88 @@ class BlackjackGame:
 
         if self.dealer.hand.is_blackjack() or self.dealer.hand.is_bust():
             self.dealer.stand()
-            return
+
+        #If dealer hand has value less than 21 and greater than 16 they stand
+        if self.dealer.hand.get_hand_value() >= 17 and self.dealer.hand.get_hand_value() < 21:
+            self.dealer.stand()
 
         # If the dealer has a hand value less than 17, they hit
 
         if self.dealer.hand.get_hand_value() < 17:
             self.dealer.hit(self.deck.deal_card())
-            return
 
+    def render_scores(self, display):
+
+        # Set up font object
+
+        smallfont = pygame.font.SysFont('Corbel', 30) 
+
+        # Draw both backdrops for the player and dealer value text
+
+        pygame.draw.rect(display.screen, (0, 0, 0), [200, 25, 400, 60])
+        pygame.draw.rect(display.screen, (0, 0, 0), [200, 625, 400, 60])
+
+        # Render out the font and center it at the backdrops 
+
+        dealer_txt = smallfont.render(f"Dealer Value: {self.dealer.hand.get_hand_value()}", True , (255, 255, 255))
+        dealer_txt_rect = dealer_txt.get_rect(center=(400, 55))
+
+        player_txt = smallfont.render(f"Player Value: {self.player.hand.get_hand_value()}", True , (255, 255, 255))
+        player_txt_rect = player_txt.get_rect(center=(400, 655))
+
+        # Update the screen with the text objects
+
+        display.screen.blit(player_txt, player_txt_rect)
+        display.screen.blit(dealer_txt, dealer_txt_rect)
+
+        pygame.display.update()
+
+    def play_again_render(self, display):
+        
+        # Create both the play and exit button and create boolean
+        # to keep together the while loop
+
+        play_button = Button("Play Again", 300, 300, 250, 100, display)
+        exit_button = Button("Exit Game", 600, 300, 250, 100, display)
+        made_choice = False
+
+        while not made_choice:
+            
+            # Wait for player to make choice
+
+            play_button.hovering_color()
+            exit_button.hovering_color()
+
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    # If the player clicks on "Play Again", 
+                    # Restart the game and reset the display
+
+                    if play_button.check_hovering():
+                        made_choice = True
+                        display.reset_screen()
+                        self.new_game()
+
+                    elif exit_button.check_hovering():
+
+                        # Exit the game if they click exit
+
+                        sys.exit()
+
+
+    def win_display(self, display):
+
+        # WILL IMPLEMENT THIS LATER - Markus
+
+        smallfont = pygame.font.SysFont('Corbel', 30) 
 
     def new_game(self):
-        pass
+        self.player.hand.reset_hand()
+        self.player.is_standing = False
+        self.dealer.hand.reset_hand()
+        self.dealer.is_standing = False
+        self.deal_start_cards()
     
 
 if __name__ == "__main__":
@@ -73,20 +153,54 @@ if __name__ == "__main__":
 
     # Setting up hit and stand button for the GUI
 
-    hit_button = Button("Hit", 900, 500, 150, 75, d)
-    stand_button = Button("Stand", 900, 400, 150, 75, d)
+    hit_button = Button("Hit", 980, 480, 150, 75, d)
+    stand_button = Button("Stand", 980, 355, 150, 75, d)
+    quit_button = Button("Quit", 980, 75, 150, 75, d)
 
     # Constant loop to keep the game running as long as the player doesn't exit out of the window.
 
     while d.running and game.play_game:
-
+        
         # Player continues to hit until they stand. Then dealer does their turns.
         
-        for event in pygame.event.get():      
+        for event in pygame.event.get():    
+
+            # This renders all of the buttons (with hovering functionality)
+            # and renders the necessary text elements
+
+            hit_button.hovering_color()
+            stand_button.hovering_color()
+            quit_button.hovering_color()
+            game.render_scores(d)
+
             if event.type == pygame.QUIT: 
                 d.running = False
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
+
+                # If the mouse button is clicked while hovering over
+                # hit/stand/quit button, perform that actions
+
                 if hit_button.check_hovering():
-                    print("hit")
+                    game.player.hit(game.deck.deal_card())
+
                 elif stand_button.check_hovering():
-                    print("stand")
+                    game.player.stand()
+
+                elif quit_button.check_hovering():
+                    game.play_game = False
+
+            #Checks if player stands or busts after every turn then goes to dealers turn if player stood
+            if game.player.hand.is_bust():
+                print("Player busts/ new game")
+                game.play_again_render(d)
+            elif game.player.is_standing:
+                print("Dealer Turn")
+                while game.dealer.is_standing == False:
+                    game.dealer_turn()
+
+                if game.dealer.is_standing:
+                    game.score_round()
+                    game.play_again_render(d)
+
+        pygame.display.flip()

@@ -1,6 +1,0 @@
-Classes needed to implement:
-- Card 
-- Game/Logic/Turns
-- Player/Dealer (Same class)
-- Player Hand/Dealer Hand
-- Deck

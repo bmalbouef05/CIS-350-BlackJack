@@ -15,11 +15,16 @@ class Player:
 
         self.is_standing = False
 
+        # Check to see if player just drew cards
+
+        self.drew_card = True
+
     def hit(self, card):
 
         # Just adds the "hit" card to the current hand
 
         self.hand.draw_card(card)
+        self.drew_card = True
 
     def stand(self):
         self.is_standing = True
