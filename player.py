@@ -1,4 +1,5 @@
 from hand import Hand
+from card import Card
 
 class Player:
     def __init__(self, is_person):
@@ -20,11 +21,15 @@ class Player:
         self.drew_card = True
 
     def hit(self, card):
+        
 
-        # Just adds the "hit" card to the current hand
+        if type(card) != Card:
+            return
+        else:
+            # Just adds the "hit" card to the current hand
 
-        self.hand.draw_card(card)
-        self.drew_card = True
+            self.hand.draw_card(card)
+            self.drew_card = True
 
     def stand(self):
         self.is_standing = True

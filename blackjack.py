@@ -17,6 +17,8 @@ class BlackjackGame:
         self.player = Player(True)
         self.dealer = Player(False)
 
+        self.outcome = ""
+
         self.money_total = 1000
         self.rounds_total = 0
         
@@ -28,7 +30,7 @@ class BlackjackGame:
         self.new_game()
     
     def deal_start_cards(self):
-        
+        #BLACKJAKE AMIRAITE
         # Make a new deck
 
         self.deck.reset_deck()
@@ -44,17 +46,24 @@ class BlackjackGame:
         pass
 
     #Scores the current hands and decides who wins then resets the game
-    def score_round(self):
+    def score_round(self, display):
+        
+        print(self.player.hand.get_hand_value())
+        print(self.dealer.hand.get_hand_value())
 
         #Figure out all of the betting(player wins or loses)
         if self.dealer.hand.get_hand_value() > 21:
-            print("Dealer Bust/PLayer Wins")
+            self.outcome = "win"
+            self.win_display(display)
         elif self.player.hand.get_hand_value() == self.dealer.hand.get_hand_value():
-            print("PUSH")
+            self.outcome = "tie"
+            self.tie_display(display)
         elif self.player.hand.get_hand_value() > self.dealer.hand.get_hand_value():
-            print("Player Wins")
+            self.outcome = "win"
+            self.win_display(display)
         elif self.player.hand.get_hand_value() < self.dealer.hand.get_hand_value():
-            print("Dealer Wins")
+            self.outcome = "lose"
+            self.lose_display(display)
 
     def dealer_turn(self):
         
@@ -103,8 +112,8 @@ class BlackjackGame:
         # Create both the play and exit button and create boolean
         # to keep together the while loop
 
-        play_button = Button("Play Again", 300, 300, 250, 100, display)
-        exit_button = Button("Exit Game", 600, 300, 250, 100, display)
+        play_button = Button("Play Again", 320, 350, 250, 100, display)
+        exit_button = Button("Exit Game", 620, 350, 250, 100, display)
         made_choice = False
 
         while not made_choice:
@@ -115,6 +124,10 @@ class BlackjackGame:
             exit_button.hovering_color()
 
             for event in pygame.event.get():
+
+                if event.type == pygame.QUIT:
+                    sys.exit()
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
 
                     # If the player clicks on "Play Again", 
@@ -134,9 +147,33 @@ class BlackjackGame:
 
     def win_display(self, display):
 
-        # WILL IMPLEMENT THIS LATER - Markus
+        smallfont = pygame.font.SysFont('Corbel', 100, bold=True) 
 
-        smallfont = pygame.font.SysFont('Corbel', 30) 
+        txt = smallfont.render("You Win!", True, (0, 0, 0)) 
+        txt_rect = txt.get_rect(center=(600, 250))
+
+        display.screen.blit(txt, txt_rect)
+        pygame.display.update()
+
+    def lose_display(self, display):
+
+        smallfont = pygame.font.SysFont('Corbel', 100, bold=True) 
+
+        txt = smallfont.render("You Lose!", True, (0, 0, 0)) 
+        txt_rect = txt.get_rect(center=(600, 250))
+
+        display.screen.blit(txt, txt_rect)
+        pygame.display.update()
+
+    def tie_display(self, display):
+
+        smallfont = pygame.font.SysFont('Corbel', 100, bold=True) 
+
+        txt = smallfont.render("Tie!", True, (0, 0, 0)) 
+        txt_rect = txt.get_rect(center=(600, 250))
+
+        display.screen.blit(txt, txt_rect)
+        pygame.display.update()
 
     def new_game(self):
         self.player.hand.reset_hand()
@@ -195,6 +232,8 @@ if __name__ == "__main__":
             #Checks if player stands or busts after every turn then goes to dealers turn if player stood
             if game.player.hand.is_bust():
                 print("Player busts/ new game")
+                game.lose_display(d)
+                game.render_scores(d)
                 game.play_again_render(d)
             elif game.player.is_standing:
                 print("Dealer Turn")
@@ -202,7 +241,8 @@ if __name__ == "__main__":
                     game.dealer_turn()
 
                 if game.dealer.is_standing:
-                    game.score_round()
+                    game.score_round(d)
+                    game.render_scores(d)
                     game.play_again_render(d)
 
         pygame.display.flip()
