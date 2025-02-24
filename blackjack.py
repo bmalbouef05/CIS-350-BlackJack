@@ -6,7 +6,6 @@ from player import Player
 from button import Button
 import sys
 
-#
 
 class BlackjackGame:
     def __init__(self):
@@ -54,15 +53,18 @@ class BlackjackGame:
         #Figure out all of the betting(player wins or loses)
         if self.dealer.hand.get_hand_value() > 21:
             self.outcome = "win"
+            self.money_total += 100
             self.win_display(display)
         elif self.player.hand.get_hand_value() == self.dealer.hand.get_hand_value():
             self.outcome = "tie"
             self.tie_display(display)
         elif self.player.hand.get_hand_value() > self.dealer.hand.get_hand_value():
             self.outcome = "win"
+            self.money_total += 100
             self.win_display(display)
         elif self.player.hand.get_hand_value() < self.dealer.hand.get_hand_value():
             self.outcome = "lose"
+            self.money_total -= 100
             self.lose_display(display)
 
     def dealer_turn(self):
@@ -106,6 +108,25 @@ class BlackjackGame:
         display.screen.blit(dealer_txt, dealer_txt_rect)
 
         pygame.display.update()
+    
+    def render_money(self, display):
+       
+        # Set up font object
+
+        smallfont = pygame.font.SysFont('Corbel', 30) 
+        
+        # Draw backdrop
+
+        pygame.draw.rect(display.screen, (0, 0, 0), [650, 25, 200, 60])
+
+        # Render the amount of money the player has and center with backdrop
+
+        money_txt = smallfont.render(f"Money: {self.money_total}", True , (255, 255, 255))
+        money_txt_rect = money_txt.get_rect(center=(745, 55))
+
+        # Update the screen with the text objects
+
+        display.screen.blit(money_txt, money_txt_rect)
 
     def play_again_render(self, display):
         
@@ -211,6 +232,7 @@ if __name__ == "__main__":
             stand_button.hovering_color()
             quit_button.hovering_color()
             game.render_scores(d)
+            game.render_money(d)
 
             if event.type == pygame.QUIT: 
                 d.running = False
@@ -232,8 +254,10 @@ if __name__ == "__main__":
             #Checks if player stands or busts after every turn then goes to dealers turn if player stood
             if game.player.hand.is_bust():
                 print("Player busts/ new game")
+                game.money_total -= 100
                 game.lose_display(d)
                 game.render_scores(d)
+                game.render_money(d)
                 game.play_again_render(d)
             elif game.player.is_standing:
                 print("Dealer Turn")
@@ -243,6 +267,7 @@ if __name__ == "__main__":
                 if game.dealer.is_standing:
                     game.score_round(d)
                     game.render_scores(d)
+                    game.render_money(d)
                     game.play_again_render(d)
 
         pygame.display.flip()
