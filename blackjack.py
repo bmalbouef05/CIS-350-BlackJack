@@ -5,6 +5,7 @@ from deck import Deck
 from player import Player
 from button import Button
 import sys
+import os
 
 
 class BlackjackGame:
@@ -82,6 +83,23 @@ class BlackjackGame:
 
         if self.dealer.hand.get_hand_value() < 17:
             self.dealer.hit(self.deck.deal_card())
+
+    def render_cards(self, display):
+        for i in range(len(self.player.hand.current_hand)):
+            rank = self.player.hand.current_hand[i].rank
+            suit = self.player.hand.current_hand[i].suit
+            current_card = pygame.image.load(f"img\cards\{rank}_of_{suit}.png")
+            current_card = pygame.transform.scale(current_card, (120, 160))
+            current_card_rect = current_card.get_rect(center=((200 + (135 * i)), 525))
+            display.screen.blit(current_card, current_card_rect)
+
+        for i in range(len(self.dealer.hand.current_hand)):
+            rank = self.dealer.hand.current_hand[i].rank
+            suit = self.dealer.hand.current_hand[i].suit
+            current_card = pygame.image.load(f"img\cards\{rank}_of_{suit}.png")
+            current_card = pygame.transform.scale(current_card, (120, 160))
+            current_card_rect = current_card.get_rect(center=((200 + (135 * i)), 200))
+            display.screen.blit(current_card, current_card_rect)
 
     def render_scores(self, display):
 
@@ -217,6 +235,8 @@ if __name__ == "__main__":
     stand_button = Button("Stand", 980, 355, 150, 75, d)
     quit_button = Button("Quit", 980, 75, 150, 75, d)
 
+    game.render_cards(d)
+
     # Constant loop to keep the game running as long as the player doesn't exit out of the window.
 
     while d.running and game.play_game:
@@ -233,6 +253,7 @@ if __name__ == "__main__":
             quit_button.hovering_color()
             game.render_scores(d)
             game.render_money(d)
+            game.render_cards(d)
 
             if event.type == pygame.QUIT: 
                 d.running = False
@@ -255,6 +276,7 @@ if __name__ == "__main__":
             if game.player.hand.is_bust():
                 print("Player busts/ new game")
                 game.money_total -= 100
+                game.render_cards(d)
                 game.lose_display(d)
                 game.render_scores(d)
                 game.render_money(d)
@@ -263,8 +285,10 @@ if __name__ == "__main__":
                 print("Dealer Turn")
                 while game.dealer.is_standing == False:
                     game.dealer_turn()
+                    
 
                 if game.dealer.is_standing:
+                    game.render_cards(d)
                     game.score_round(d)
                     game.render_scores(d)
                     game.render_money(d)
