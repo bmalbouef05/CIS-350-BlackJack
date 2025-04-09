@@ -85,19 +85,42 @@ class BlackjackGame:
             self.dealer.hit(self.deck.deal_card())
 
     def render_cards(self, display):
+
+        # Render the player's hand
+
         for i in range(len(self.player.hand.current_hand)):
+
+            # Establish rank and suit variables (for better readability)
+
             rank = self.player.hand.current_hand[i].rank
             suit = self.player.hand.current_hand[i].suit
+
+            # Load image from file and scale it down 
+
             current_card = pygame.image.load(f"img\cards\{rank}_of_{suit}.png")
             current_card = pygame.transform.scale(current_card, (120, 160))
+
+            # Calculate x value of card, center it, then draw it
+
             current_card_rect = current_card.get_rect(center=((200 + (135 * i)), 525))
             display.screen.blit(current_card, current_card_rect)
 
+        # Render the dealer's hand
+
         for i in range(len(self.dealer.hand.current_hand)):
+
+            # Establish rank and suit variables (for better readability)
+
             rank = self.dealer.hand.current_hand[i].rank
             suit = self.dealer.hand.current_hand[i].suit
+
+            # Load image from file and scale it down 
+
             current_card = pygame.image.load(f"img\cards\{rank}_of_{suit}.png")
             current_card = pygame.transform.scale(current_card, (120, 160))
+
+            # Calculate x value of card, center it, then draw it
+
             current_card_rect = current_card.get_rect(center=((200 + (135 * i)), 200))
             display.screen.blit(current_card, current_card_rect)
 
@@ -105,13 +128,17 @@ class BlackjackGame:
 
         # Set up font object
 
-        smallfont = pygame.font.SysFont('Corbel', 30) 
+        smallfont = pygame.font.Font('./BowlbyOneSC-Regular.ttf', 30) 
 
         # Draw both backdrops for the player and dealer value text
 
-        pygame.draw.rect(display.screen, (0, 0, 0), [200, 25, 400, 60])
-        pygame.draw.rect(display.screen, (0, 0, 0), [200, 625, 400, 60])
+        pygame.draw.rect(display.screen, (0, 0, 0), [180, 15, 440, 80], border_radius=50)
+        pygame.draw.rect(display.screen, (0, 0, 0), [180, 615, 440, 80], border_radius=50)
 
+        pygame.draw.rect(display.screen, (50, 50, 50), [200, 25, 400, 60], border_radius=50)
+        pygame.draw.rect(display.screen, (50, 50, 50), [200, 625, 400, 60], border_radius=50)
+
+        
         # Render out the font and center it at the backdrops 
 
         dealer_txt = smallfont.render(f"Dealer Value: {self.dealer.hand.get_hand_value()}", True , (255, 255, 255))
@@ -131,11 +158,12 @@ class BlackjackGame:
        
         # Set up font object
 
-        smallfont = pygame.font.SysFont('Corbel', 30) 
+        smallfont = pygame.font.Font('./BowlbyOneSC-Regular.ttf', 20) 
         
         # Draw backdrop
 
-        pygame.draw.rect(display.screen, (0, 0, 0), [650, 25, 200, 60])
+        pygame.draw.rect(display.screen, (0, 0, 0), [640, 20, 220, 70], border_radius=50)
+        pygame.draw.rect(display.screen, (50, 50, 50), [650, 25, 200, 60], border_radius=50)
 
         # Render the amount of money the player has and center with backdrop
 
@@ -184,11 +212,40 @@ class BlackjackGame:
                         sys.exit()
 
 
+    def render_text_background(self, text, display):
+        
+        smallfont = pygame.font.SysFont('./BowlbyOneSC-Regular.ttf', 100, bold=True) 
+
+        txt_ul = smallfont.render(text, True, (0, 0, 0)) 
+        txt_ul_rect = txt_ul.get_rect(center=(595, 245))
+
+        display.screen.blit(txt_ul, txt_ul_rect)
+
+        txt_ur = smallfont.render(text, True, (0, 0, 0)) 
+        txt_ur_rect = txt_ur.get_rect(center=(605, 245))
+
+        display.screen.blit(txt_ur, txt_ur_rect)
+
+        txt_ll = smallfont.render(text, True, (0, 0, 0)) 
+        txt_ll_rect = txt_ll.get_rect(center=(595, 255))
+
+        display.screen.blit(txt_ll, txt_ll_rect)
+
+        txt_lr = smallfont.render(text, True, (0, 0, 0)) 
+        txt_lr_rect = txt_lr.get_rect(center=(605, 255))
+
+        display.screen.blit(txt_lr, txt_lr_rect)
+        
+
+        pygame.display.update()
+
     def win_display(self, display):
 
-        smallfont = pygame.font.SysFont('Corbel', 100, bold=True) 
+        smallfont = pygame.font.SysFont('./BowlbyOneSC-Regular.ttf', 100, bold=True) 
 
-        txt = smallfont.render("You Win!", True, (0, 0, 0)) 
+        self.render_text_background("You Win!", display)
+
+        txt = smallfont.render("You Win!", True, (255, 255, 255)) 
         txt_rect = txt.get_rect(center=(600, 250))
 
         display.screen.blit(txt, txt_rect)
@@ -196,9 +253,11 @@ class BlackjackGame:
 
     def lose_display(self, display):
 
-        smallfont = pygame.font.SysFont('Corbel', 100, bold=True) 
+        smallfont = pygame.font.SysFont('./BowlbyOneSC-Regular.ttf', 100, bold=True) 
 
-        txt = smallfont.render("You Lose!", True, (0, 0, 0)) 
+        self.render_text_background("You Lose!", display)
+
+        txt = smallfont.render("You Lose!", True, (255, 255, 255)) 
         txt_rect = txt.get_rect(center=(600, 250))
 
         display.screen.blit(txt, txt_rect)
@@ -206,9 +265,11 @@ class BlackjackGame:
 
     def tie_display(self, display):
 
-        smallfont = pygame.font.SysFont('Corbel', 100, bold=True) 
+        smallfont = pygame.font.SysFont('./BowlbyOneSC-Regular.ttf', 100, bold=True) 
 
-        txt = smallfont.render("Tie!", True, (0, 0, 0)) 
+        self.render_text_background("Tie!", display)
+
+        txt = smallfont.render("Tie!", True, (255, 255, 255)) 
         txt_rect = txt.get_rect(center=(600, 250))
 
         display.screen.blit(txt, txt_rect)

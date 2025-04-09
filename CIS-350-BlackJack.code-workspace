@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "CIS-350-BlackJack",
+			"path": "."
+		},
+		{
+			"name": "img",
+			"path": "../../../../Documents/VS Code Projects/CIS-350-BlackJack/img"
+		}
+	],
+	"settings": {}
+}

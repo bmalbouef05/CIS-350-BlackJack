@@ -16,7 +16,7 @@ class Button:
 
         # Creating the font object for the text object made later
 
-        self.smallfont = pygame.font.SysFont('Corbel',35) 
+        self.smallfont = pygame.font.SysFont('./BowlbyOneSC-Regular.ttf', 35) 
 
         # Render the text of the button to the center of the actual button
 
@@ -25,7 +25,7 @@ class Button:
 
         # Draw the button rectangle, then place the text on the rectangle and update the screen
 
-        pygame.draw.rect(self.display.screen, (190, 190, 190), [self.x, self.y, self.width, self.height])
+        pygame.draw.rect(self.display.screen, (190, 190, 190), [self.x, self.y, self.width, self.height], border_radius=50)
         self.display.screen.blit(self.txt, self.txt_rect)
         pygame.display.update()
 
@@ -41,11 +41,11 @@ class Button:
         # to a darker color to give it the visual feel of it being hovered over
 
         if self.check_hovering():
-            pygame.draw.rect(self.display.screen, (100, 100, 100), [self.x, self.y, self.width, self.height])
+            pygame.draw.rect(self.display.screen, (100, 100, 100), [self.x, self.y, self.width, self.height], border_radius=50)
             self.display.screen.blit(self.txt, self.txt_rect)
             pygame.display.update()
         else:
-            pygame.draw.rect(self.display.screen, (190, 190, 190), [self.x, self.y, self.width, self.height])
+            pygame.draw.rect(self.display.screen, (190, 190, 190), [self.x, self.y, self.width, self.height], border_radius=50)
             self.display.screen.blit(self.txt, self.txt_rect)
             pygame.display.update()
 
