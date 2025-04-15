@@ -99,7 +99,7 @@ class BlackjackGame:
 
             # Load image from file and scale it down 
 
-            current_card = pygame.image.load(f"img/cards/{rank}_of_{suit}.png")
+            current_card = pygame.image.load(f"img\cards\{rank}_of_{suit}.png")
             current_card = pygame.transform.scale(current_card, (120, 160))
 
             # Calculate x value of card, center it, then draw it
@@ -118,7 +118,7 @@ class BlackjackGame:
 
             # Load image from file and scale it down 
 
-            current_card = pygame.image.load(f"img/cards/{rank}_of_{suit}.png")
+            current_card = pygame.image.load(f"img\cards\{rank}_of_{suit}.png")
             current_card = pygame.transform.scale(current_card, (120, 160))
 
             # Calculate x value of card, center it, then draw it
@@ -195,6 +195,26 @@ class BlackjackGame:
         # Update the screen with the text objects
 
         display.screen.blit(goal_txt, goal_txt_rect)
+
+    def render_play_bet(self, display):
+
+        # Set up font object
+
+        smallfont = pygame.font.Font('./BowlbyOneSC-Regular.ttf', 20) 
+        
+        # Draw backdrop
+
+        pygame.draw.rect(display.screen, (0, 0, 0), [20, 20, 140, 70], border_radius=50)
+        pygame.draw.rect(display.screen, (50, 50, 50), [25, 25, 130, 60], border_radius=50)
+
+        # Render goal and center with backdrop
+
+        bet_txt = smallfont.render(f"Bet: {self.bet}", True , (255, 255, 255))
+        bet_txt_rect = bet_txt.get_rect(center=(90, 55))
+
+        # Update the screen with the text objects
+
+        display.screen.blit(bet_txt, bet_txt_rect)
 
     def play_again_render(self, display):
         
@@ -387,7 +407,6 @@ class BlackjackGame:
                         self.new_game()
 
     def new_game(self):
-        self.bet = 0
         self.player.hand.reset_hand()
         self.player.is_standing = False
         self.dealer.hand.reset_hand()
@@ -453,6 +472,8 @@ if __name__ == "__main__":
         game.render_money(d)
         game.bet_display(d)
         game.bet_render(d)
+        game.render_goal(d)
+        game.render_play_bet(d)
         # Constant loop to keep the game running as long as the player doesn't exit out of the window.
 
         while d.running and game.play_game:
@@ -462,6 +483,14 @@ if __name__ == "__main__":
 
                 # This renders all of the buttons (with hovering functionality)
                 # and renders the necessary text elements
+                
+                #If money hits 0 add 100 and set goal back to 2000
+                if game.money_total == 0:
+                    game.money_total += 100
+                    game.goal = 2000
+
+                if game.money_total >= game.goal:
+                    game.goal *= 2
 
                 hit_button.hovering_color()
                 stand_button.hovering_color()
@@ -471,8 +500,9 @@ if __name__ == "__main__":
                 game.render_cards(d)
                 game.render_goal(d)
 
-                if game.money_total >= game.goal:
-                    game.goal *= 2
+                if game.bet == 0:
+                    game.bet_display(d)
+                    game.bet_render(d)
 
                 if event.type == pygame.QUIT: 
                     game.save_game()
@@ -496,12 +526,15 @@ if __name__ == "__main__":
                 #Checks if player stands or busts after every turn then goes to dealers turn if player stood
                 if game.player.hand.is_bust():
                     print("Player busts/ new game")
+                    print(game.bet)
                     game.money_total -= game.bet
                     game.render_cards(d)
                     game.lose_display(d)
                     game.render_scores(d)
                     game.render_money(d)
+                    game.render_play_bet(d)
                     game.play_again_render(d)
+                    game.bet = 0
                 elif game.player.is_standing:
                     print("Dealer Turn")
                     while game.dealer.is_standing == False:
@@ -513,6 +546,8 @@ if __name__ == "__main__":
                         game.score_round(d)
                         game.render_scores(d)
                         game.render_money(d)
+                        game.render_play_bet(d)
+                        game.bet = 0
                         game.play_again_render(d)
 
             pygame.display.flip()
